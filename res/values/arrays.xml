@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="entries_update_intervals">
+        <item>Never</item>
+        <item>Every 30 seconds</item>
+        <item>Every 1 minute</item>
+        <item>Every 15 minutes</item>
+        <item>Every 30 minutes</item>  
+    </string-array>
+    <string-array name="entryvalues_update_intervals">
+        <item>0</item>
+        <item>30</item>
+        <item>60</item>
+        <item>900</item>
+        <item>1800</item>  
+    </string-array>
+</resources>

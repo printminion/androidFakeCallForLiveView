@@ -1,0 +1,16 @@
+<PreferenceScreen	xmlns:android="http://schemas.android.com/apk/res/android"	
+					android:title="Hello World plugin">
+	<CheckBoxPreference android:key="pluginEnabled"
+	                	android:title="Enabled"
+	                	android:order = "0"
+	                	android:defaultValue = "false"/>
+	<ListPreference		android:key="updateInterval"
+		                android:title="Update Frequency"
+		                android:entries="@array/entries_update_intervals"
+		                android:entryValues="@array/entryvalues_update_intervals"
+		                android:dialogTitle="Select update Interval" 
+		                android:dependency="pluginEnabled"
+		                android:order="1"
+                        android:defaultValue="60"
+		                />
+</PreferenceScreen>

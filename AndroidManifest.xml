@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.kupriyanov.android.liveview.plugins.fakecall">
+	<application android:icon="@drawable/icon" android:label="@string/app_name" android:description="@string/application_description">
+		<service android:name="com.kupriyanov.android.liveview.plugins.fakecall.FakeCallService" android:label="Hello World plugin service">
+			<intent-filter>
+				<action android:name="com.kupriyanov.android.liveview.plugins.fakecall.FakeCallService"/>
+				<category android:name="android.intent.category.LAUNCHER"/>
+			</intent-filter>
+		</service>
+		<activity android:name="com.sonyericsson.extras.liveview.plugins.PluginPreferences" android:label="Hello world plugin preferences">
+			<intent-filter>
+				<action android:name="com.kupriyanov.android.liveview.plugins.fakecall.PREFERENCES"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<receiver android:name="com.sonyericsson.extras.liveview.plugins.PluginReceiver">
+			<intent-filter>
+				<action android:name="com.sonyericsson.extras.liveview.LAUNCH_PLUGIN"/>
+			</intent-filter>
+		</receiver>
+	</application>
+	
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="com.sonyericsson.extras.liveview.permission.LIVEVIEW_API"/>
+	<uses-permission android:name="android.permission.VIBRATE"/>
+	
+	<uses-sdk android:minSdkVersion="4"/>
+</manifest>
