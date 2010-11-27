@@ -1,9 +1,11 @@
 <PreferenceScreen	xmlns:android="http://schemas.android.com/apk/res/android"	
-					android:title="Hello World plugin">
+					android:title="Fake Call plugin">
 	<CheckBoxPreference android:key="pluginEnabled"
 	                	android:title="Enabled"
 	                	android:order = "0"
-	                	android:defaultValue = "false"/>
+	                	android:defaultValue = "false"/><!--
+
+
 	<ListPreference		android:key="updateInterval"
 		                android:title="Update Frequency"
 		                android:entries="@array/entries_update_intervals"
@@ -13,4 +15,34 @@
 		                android:order="1"
                         android:defaultValue="60"
 		                />
+
+	--><ListPreference	android:key="sound_nr"
+		                android:title="Sound"
+		                android:summary="Select Sound to play" 
+		                android:entries="@array/entries_sounds"
+		                android:entryValues="@array/entryvalues_sounds"
+		                android:dialogTitle="Select Sound to play" 
+		                android:dependency="pluginEnabled"
+		                android:order="1"
+                        android:defaultValue="2"
+		                />
+
+<ListPreference	android:key="sound_repeat_times"
+		                android:title="Times to repeat"
+		                android:summary="How many times will sound play"
+		                android:entries="@array/entries_sound_repeat_times"
+		                android:entryValues="@array/entryvalues_sound_repeat_times"
+		                android:dialogTitle="Times to repeat" 
+		                android:dependency="pluginEnabled"
+		                android:order="2"
+                        android:defaultValue="3"
+		                />
+
+<CheckBoxPreference android:key="vibrate_on"
+	                	android:title="Vibrate"
+	                	android:order = "3"
+	                	android:dependency="pluginEnabled"
+	                	android:defaultValue = "true"/>
+	                	
+
 </PreferenceScreen>

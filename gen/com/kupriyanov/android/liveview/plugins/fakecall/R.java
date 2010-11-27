@@ -9,8 +9,12 @@ package com.kupriyanov.android.liveview.plugins.fakecall;
 
 public final class R {
     public static final class array {
-        public static final int entries_update_intervals=0x7f050000;
-        public static final int entryvalues_update_intervals=0x7f050001;
+        public static final int entries_sound_repeat_times=0x7f060004;
+        public static final int entries_sounds=0x7f060002;
+        public static final int entries_update_intervals=0x7f060000;
+        public static final int entryvalues_sound_repeat_times=0x7f060005;
+        public static final int entryvalues_sounds=0x7f060003;
+        public static final int entryvalues_update_intervals=0x7f060001;
     }
     public static final class attr {
     }
@@ -20,16 +24,23 @@ public final class R {
     public static final class layout {
         public static final int main=0x7f030000;
     }
+    public static final class raw {
+        public static final int cell_phone_vibrate_1=0x7f050000;
+        public static final int laugh_4=0x7f050001;
+        public static final int snoring_5=0x7f050002;
+        public static final int telephone_ring_1=0x7f050003;
+        public static final int telephone_ring_3=0x7f050004;
+    }
     public static final class string {
-        public static final int app_name=0x7f060000;
-        public static final int application_description=0x7f060004;
-        public static final int intent_preferences=0x7f060002;
-        public static final int intent_service=0x7f060003;
+        public static final int app_name=0x7f070000;
+        public static final int application_description=0x7f070004;
+        public static final int intent_preferences=0x7f070002;
+        public static final int intent_service=0x7f070003;
         /**  
     	The following strings needs to be defined in order for the Plugin to function.
     
          */
-        public static final int pluginname=0x7f060001;
+        public static final int pluginname=0x7f070001;
     }
     public static final class xml {
         public static final int preferences=0x7f040000;

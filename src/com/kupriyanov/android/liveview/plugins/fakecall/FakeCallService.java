@@ -23,6 +23,7 @@
 
 package com.kupriyanov.android.liveview.plugins.fakecall;
 
+import com.kupriyanov.android.media.SoundManager;
 import com.sonyericsson.extras.liveview.plugins.AbstractPluginService;
 import com.sonyericsson.extras.liveview.plugins.PluginConstants;
 
@@ -58,15 +59,14 @@ public class FakeCallService extends AbstractPluginService {
 	// Preferences - update interval
 	private static final String UPDATE_INTERVAL = "updateInterval";
 
-	private long mUpdateInterval = 60000;
+	// private long mUpdateInterval = 60000;
+	private long mUpdateInterval = 10000; // set 10 sec for update
 
 	// private Worker mRingThread;
-	private Handler mRingHandler;
+	// private Handler mRingHandler;
 
 	// Uri for the ringtone.
 	Uri mCustomRingtoneUri;
-
-	private AudioManager mAudioManager;
 
 	@Override
 	public void onStart(Intent intent, int startId) {
@@ -85,6 +85,12 @@ public class FakeCallService extends AbstractPluginService {
 		// ...
 		// Do plugin specifics.
 		// ...
+
+		// Create, Initialise and then load the Sound manager
+		SoundManager.getInstance();
+		SoundManager.initSounds(this);
+		SoundManager.loadSounds();
+
 	}
 
 	@Override
@@ -110,8 +116,14 @@ public class FakeCallService extends AbstractPluginService {
 	protected void startWork() {
 		Log.d(Setup.LOG_TAG, "Enter FakeCallService.startWork.");
 		// Check if plugin is enabled.
-		if (!mWorkerRunning && mSharedPreferences.getBoolean(PluginConstants.PREFERENCES_PLUGIN_ENABLED, false)) {
+
+		// if (!mWorkerRunning &&
+		// mSharedPreferences.getBoolean(PluginConstants.PREFERENCES_PLUGIN_ENABLED,
+		// false)) {
+
+		if (!mWorkerRunning) {
 			mWorkerRunning = true;
+
 			scheduleTimer();
 		}
 	}
@@ -216,21 +228,39 @@ public class FakeCallService extends AbstractPluginService {
 		// browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		// startActivity(browserIntent);
 
-		mAudioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-		
-		Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		// mAudioManager = (AudioManager)
+		// getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+		// // mAudioManager.setRingerMode(AudioManager.);
+		// mAudioManager.setVibrateSetting(AudioManager.VIBRATE_TYPE_RINGER,
+		// AudioManager.VIBRATE_SETTING_OFF);
+		//
+		// // mAudioManager.playSoundEffect(AudioManager.E)
 
-		// 1. Vibrate for 1000 milliseconds
-		long milliseconds = 1000;
-		v.vibrate(milliseconds);
+		Log.d(PluginConstants.LOG_TAG, "openInPhone: sound_nr:" + mSharedPreferences.getString("sound_nr", "2"));
+
+		if (!mSharedPreferences.getString("sound_nr", "2").equals("0")) {
+			SoundManager.playSound(new Integer(mSharedPreferences.getString("sound_nr", "2")), new Integer(
+					mSharedPreferences.getString("sound_repeat_times", "3")), 1);
+		}
+
+		// vibrate_on
+		if (mSharedPreferences.getBoolean("vibrate_on", false)) {
+
+			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+			// 1. Vibrate for 1000 milliseconds
+			long milliseconds = 1000;
+			v.vibrate(milliseconds);
+		}
 
 		// // 2. Vibrate in a Pattern with 500ms on, 500ms off for 5 times
 		// long[] pattern = { 500, 300 };
 		// v.vibrate(pattern, 5);
 
-//		r = RingtoneManager.getRingtone(getApplicationContext(), mCustomRingtoneUri);
-//		// PhoneUtils.setAudioMode(mContext, AudioManager.MODE_RINGTONE);
-//		r.play();
+		// r = RingtoneManager.getRingtone(getApplicationContext(),
+		// mCustomRingtoneUri);
+		// // PhoneUtils.setAudioMode(mContext, AudioManager.MODE_RINGTONE);
+		// r.play();
 
 	}
 
@@ -240,10 +270,17 @@ public class FakeCallService extends AbstractPluginService {
 
 	private void sendAnnounce(String header, String body) {
 		try {
-			if (mWorkerRunning && (mLiveViewAdapter != null)
-					&& mSharedPreferences.getBoolean(PluginConstants.PREFERENCES_PLUGIN_ENABLED, false)) {
+
+			// if (mWorkerRunning && (mLiveViewAdapter != null)
+			// &&
+			// mSharedPreferences.getBoolean(PluginConstants.PREFERENCES_PLUGIN_ENABLED,
+			// false)) {
+
+			if (mWorkerRunning && (mLiveViewAdapter != null)) {
+
 				mLiveViewAdapter.sendAnnounce(mPluginId, mMenuIcon, header, body, System.currentTimeMillis(),
 						"http://en.wikipedia.org/wiki/Hello_world_program");
+
 				Log.d(PluginConstants.LOG_TAG, "Announce sent to LiveView");
 			} else {
 				Log.d(PluginConstants.LOG_TAG, "LiveView not reachable");
@@ -270,12 +307,16 @@ public class FakeCallService extends AbstractPluginService {
 		@Override
 		public void run() {
 			try {
-				sendAnnounce("Hello", "Hello world number " + mCounter++);
+
+				// sendAnnounce("Fake call",
+				// "Scroll down and push upper left button " + mCounter++);
+				sendAnnounce("Fake call", "Scroll down and push upper left button ");
+
 			} catch (Exception re) {
 				Log.e(PluginConstants.LOG_TAG, "Failed to send image to LiveView.", re);
 			}
 
-			scheduleTimer();
+			// scheduleTimer();
 		}
 
 	};
