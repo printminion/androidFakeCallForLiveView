@@ -17,11 +17,10 @@
 
 	<string-array name="entries_sounds">
 		<item>Just Vibrate</item>
-		<item>Telephone ring #1</item>
-		<item>Telephone ring #2</item>
-		<item>Cell phone vibrate #1</item>
+		<item>Default Ring</item><!-- <item>Telephone ring #1</item> <item>Telephone 
+			ring #2</item> <item>Cell phone vibrate #1</item> -->
 		<item>Laugh</item>
-		<item>Snoring</item>
+		<!-- <item>Snoring</item> -->
 	</string-array>
 	<string-array name="entryvalues_sounds">
 		<item>0</item>
@@ -40,7 +39,7 @@
 		<item>4</item>
 		<item>5</item>
 		<item>6</item>
-		
+
 	</string-array>
 	<string-array name="entryvalues_sound_repeat_times">
 		<item>0</item>
@@ -49,6 +48,21 @@
 		<item>3</item>
 		<item>4</item>
 		<item>5</item>
-	</string-array>	
-	
+	</string-array>
+
+	<string-array name="entries_sound_overide_volume">
+		<item>off</item>
+		<item>25%</item>
+		<item>50%</item>
+		<item>75%</item>
+		<item>100%</item>
+	</string-array>
+	<string-array name="entryvalues_sound_overide_volume">
+		<item>0</item>
+		<item>25</item>
+		<item>50</item>
+		<item>75</item>
+		<item>100</item>
+	</string-array>
+
 </resources>

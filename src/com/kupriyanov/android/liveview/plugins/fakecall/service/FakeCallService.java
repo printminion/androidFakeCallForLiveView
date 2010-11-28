@@ -21,9 +21,11 @@
  * THE SOFTWARE.
  */
 
-package com.kupriyanov.android.liveview.plugins.fakecall;
+package com.kupriyanov.android.liveview.plugins.fakecall.service;
 
-import com.kupriyanov.android.media.SoundManager;
+import com.kupriyanov.android.liveview.plugins.fakecall.Preferences;
+import com.kupriyanov.android.liveview.plugins.fakecall.Setup;
+//import com.kupriyanov.android.media.SoundManager;
 import com.sonyericsson.extras.liveview.plugins.AbstractPluginService;
 import com.sonyericsson.extras.liveview.plugins.PluginConstants;
 
@@ -32,10 +34,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
 
@@ -46,12 +50,17 @@ import android.util.Log;
  * device.
  */
 public class FakeCallService extends AbstractPluginService {
+	// private static final int PLAY_RING_ONCE = 1;
+	// private static final int STOP_RING = 3;
+
+	private static final int VIBRATE_LENGTH = 1000; // ms
+	private static final int PAUSE_LENGTH = 1000; // ms
 
 	// Our handler.
 	private Handler mHandler = null;
 
-	// Counter
-	private int mCounter = 1;
+	// // Counter
+	// private int mCounter = 1;
 
 	// Is loop running?
 	private boolean mWorkerRunning = false;
@@ -67,6 +76,20 @@ public class FakeCallService extends AbstractPluginService {
 
 	// Uri for the ringtone.
 	Uri mCustomRingtoneUri;
+
+	private Context mContext = null;
+
+	private Ringtone mRingtone;
+	private VibratorThread mVibratorThread;
+	private boolean mContinueVibrating;
+	private boolean mContinueRinging;
+
+	Vibrator mVibrator = null;
+	private int mLastVolume;
+	private AudioManager mAudioManager;
+	private RingToneThread mRingToneThread;
+	private int mVolume;
+	private int mLastRingerMode;
 
 	@Override
 	public void onStart(Intent intent, int startId) {
@@ -85,11 +108,14 @@ public class FakeCallService extends AbstractPluginService {
 		// ...
 		// Do plugin specifics.
 		// ...
+		if (mContext == null) {
+			mContext = getApplicationContext();
+		}
 
 		// Create, Initialise and then load the Sound manager
-		SoundManager.getInstance();
-		SoundManager.initSounds(this);
-		SoundManager.loadSounds();
+		// SoundManager.getInstance();
+		// SoundManager.initSounds(this);
+		// SoundManager.loadSounds();
 
 	}
 
@@ -123,7 +149,6 @@ public class FakeCallService extends AbstractPluginService {
 
 		if (!mWorkerRunning) {
 			mWorkerRunning = true;
-
 			scheduleTimer();
 		}
 	}
@@ -219,49 +244,215 @@ public class FakeCallService extends AbstractPluginService {
 	protected void openInPhone(String openInPhoneAction) {
 		Log.d(PluginConstants.LOG_TAG, "openInPhone: " + openInPhoneAction);
 
-		// // Open in browser.
-		// final Uri uri = Uri.parse(openInPhoneAction);
-		// final Intent browserIntent = new Intent();
-		// browserIntent.setData(uri);
-		// browserIntent.setClassName("com.android.browser",
-		// "com.android.browser.BrowserActivity");
-		// browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		// startActivity(browserIntent);
-
-		// mAudioManager = (AudioManager)
-		// getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-		// // mAudioManager.setRingerMode(AudioManager.);
-		// mAudioManager.setVibrateSetting(AudioManager.VIBRATE_TYPE_RINGER,
-		// AudioManager.VIBRATE_SETTING_OFF);
-		//
-		// // mAudioManager.playSoundEffect(AudioManager.E)
-
 		Log.d(PluginConstants.LOG_TAG, "openInPhone: sound_nr:" + mSharedPreferences.getString("sound_nr", "2"));
 
-		if (!mSharedPreferences.getString("sound_nr", "2").equals("0")) {
-			SoundManager.playSound(new Integer(mSharedPreferences.getString("sound_nr", "2")), new Integer(
-					mSharedPreferences.getString("sound_repeat_times", "3")), 1);
+		mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+
+		if (Setup.LOG_ON)
+			Log.d(Setup.LOG_TAG,
+					"override_nosound:" + mSharedPreferences.getString(Preferences.PREFERENCE_OVERRIDE_SOUND, "50"));
+
+		/*
+		 * ger Ringtone Uri
+		 */
+		if (shouldRing()) {
+			if (mCustomRingtoneUri == null) {
+				String uri = mSharedPreferences.getString(Preferences.PREFERENCE_RING_URI, null);
+
+				if (uri != null && uri.length() != 0) {
+					mCustomRingtoneUri = Uri.parse(uri);
+				}
+			}
+
+			if (Setup.LOG_ON)
+				Log.d(Setup.LOG_TAG, "got ringtone:" + mCustomRingtoneUri.toString());
+
+			/*
+			 * get ringtone
+			 */
+			if (mRingtone == null) {
+
+				mRingtone = RingtoneManager.getRingtone(getApplicationContext(), mCustomRingtoneUri);
+
+			} else {
+
+				if (isRinging()) {
+					stopRing();
+					return;
+				}
+
+				mRingtone = RingtoneManager.getRingtone(getApplicationContext(), mCustomRingtoneUri);
+			}
+
+			/*
+			 * set max volume
+			 */
+
+			mVolume = Integer.parseInt(mSharedPreferences.getString(Preferences.PREFERENCE_OVERRIDE_SOUND, "50"));
+
+			if (mVolume > 0) {
+
+				if (!isRinging()) {
+					final int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+					final Double volumeToset = (double) maxVolume / 100 * (double) mVolume;
+
+					mLastVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+					mLastRingerMode = mAudioManager.getRingerMode();
+					
+					mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+					
+					mAudioManager.setStreamVolume(AudioManager.STREAM_RING, volumeToset.intValue(),
+							AudioManager.FLAG_PLAY_SOUND);
+					if (Setup.LOG_ON)
+						log("override_nosound_VOLUME[" + mLastVolume + "]:" + volumeToset.intValue());
+
+				}
+
+			} else {
+				if (mAudioManager.getStreamVolume(AudioManager.STREAM_RING) == 0) {
+					if (Setup.LOG_ON)
+						Log.d(Setup.LOG_TAG, "skipping ring because volume is zero");
+				}
+
+			}
 		}
 
-		// vibrate_on
-		if (mSharedPreferences.getBoolean("vibrate_on", false)) {
+		if (isRinging() || isVibrating()) {
+			stopRing();
+		} else {
 
-			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+			if (shouldRing() && mRingToneThread == null) {
+				mContinueRinging = true;
 
-			// 1. Vibrate for 1000 milliseconds
-			long milliseconds = 1000;
-			v.vibrate(milliseconds);
+				mRingToneThread = new RingToneThread();
+				if (Setup.LOG_ON)
+					Log.d(Setup.LOG_TAG, "- starting RingToneThread...");
+				mRingToneThread.start();
+			}
+
+			if (shouldVibrate() && mVibratorThread == null) {
+				if (mVibrator == null) {
+					mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				}
+
+				mContinueVibrating = true;
+				mVibratorThread = new VibratorThread();
+				if (Setup.LOG_ON)
+					Log.d(Setup.LOG_TAG, "- starting vibrator...");
+				mVibratorThread.start();
+			}
 		}
 
-		// // 2. Vibrate in a Pattern with 500ms on, 500ms off for 5 times
-		// long[] pattern = { 500, 300 };
-		// v.vibrate(pattern, 5);
+	}
 
-		// r = RingtoneManager.getRingtone(getApplicationContext(),
-		// mCustomRingtoneUri);
-		// // PhoneUtils.setAudioMode(mContext, AudioManager.MODE_RINGTONE);
-		// r.play();
+	private boolean shouldRing() {
+		final String uri = mSharedPreferences.getString(Preferences.PREFERENCE_RING_URI, null);
+		final int mVolume = Integer.parseInt(mSharedPreferences.getString(Preferences.PREFERENCE_OVERRIDE_SOUND, "50"));
 
+		if(mVolume == 0){
+			return false;
+		}
+		
+		if (uri == null) {
+			return false;
+		} else {
+			if (uri.length() > 0) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean isRinging() {
+		synchronized (this) {
+			return (mRingToneThread != null);
+		}
+	}
+
+	/**
+	 * @return true if we're vibrating in response to an incoming call
+	 * @see isVibrating
+	 * @see isRinging
+	 */
+	private boolean isVibrating() {
+		synchronized (this) {
+			return (mVibratorThread != null);
+		}
+	}
+
+	private boolean shouldVibrate() {
+		return mSharedPreferences.getBoolean("vibrate_on", false);
+	}
+
+	private class VibratorThread extends Thread {
+		public void run() {
+			while (mContinueVibrating) {
+				mVibrator.vibrate(VIBRATE_LENGTH);
+				SystemClock.sleep(VIBRATE_LENGTH + PAUSE_LENGTH);
+			}
+		}
+	}
+
+	private class RingToneThread extends Thread {
+		public void run() {
+			while (mContinueRinging) {
+				if (mRingtone != null) {
+					if (!mRingtone.isPlaying()) {
+						mRingtone.play();
+					}
+				}
+				SystemClock.sleep(VIBRATE_LENGTH + PAUSE_LENGTH);
+			}
+		}
+	}
+
+	void stopRing() {
+		synchronized (this) {
+			if (Setup.LOG_ON)
+				log("stopRing()...");
+
+			// try {
+			// mPowerManager.setAttentionLight(false, 0x00000000);
+			// } catch (RemoteException ex) {
+			// // the other end of this binder call is in the system process.
+			// }
+
+			mAudioManager.setStreamVolume(AudioManager.STREAM_RING, mLastVolume, AudioManager.FLAG_PLAY_SOUND);
+			mAudioManager.setRingerMode(mLastRingerMode);
+			
+
+			if (mRingToneThread != null) {
+
+				if (mRingtone != null) {
+					if (mRingtone.isPlaying()) {
+						mRingtone.stop();
+					}
+					mRingtone = null;
+					mCustomRingtoneUri = null;
+				}
+
+				if (Setup.LOG_ON)
+					log("- stopRing: cleaning up ringtone thread...");
+				mContinueRinging = false;
+				mRingToneThread = null;
+			}
+
+			if (mVibratorThread != null) {
+				if (Setup.LOG_ON)
+					log("- stopRing: cleaning up vibrator thread...");
+				mContinueVibrating = false;
+				mVibratorThread = null;
+			}
+			// Also immediately cancel any vibration in progress.
+			if (mVibrator != null) {
+				mVibrator.cancel();
+			}
+		}
+	}
+
+	private void log(String string) {
+		Log.d(Setup.LOG_TAG, string);
 	}
 
 	protected void screenMode(int mode) {

@@ -1,48 +1,48 @@
-<PreferenceScreen	xmlns:android="http://schemas.android.com/apk/res/android"	
-					android:title="Fake Call plugin">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="Fake Call plugin">
 	<CheckBoxPreference android:key="pluginEnabled"
-	                	android:title="Enabled"
-	                	android:order = "0"
-	                	android:defaultValue = "false"/><!--
+		android:title="Enabled" android:order="0" android:defaultValue="false" /><!-- 
+		<ListPreference android:key="updateInterval" android:title="Update Frequency" 
+		android:entries="@array/entries_update_intervals" android:entryValues="@array/entryvalues_update_intervals" 
+		android:dialogTitle="Select update Interval" android:dependency="pluginEnabled" 
+		android:order="1" android:defaultValue="60" /> -->
+
+	<Preference android:key="ring_uri" android:title="Ringtone"
+		android:summary="Set Ringtone" android:order="1" android:dependency="pluginEnabled" />
+
+	<!-- <ListPreference android:key="sound_nr" android:title="Sound" android:summary="Select 
+		Sound to play" android:entries="@array/entries_sounds" android:entryValues="@array/entryvalues_sounds" 
+		android:dialogTitle="Select Sound to play" android:dependency="pluginEnabled" 
+		android:order="1" android:defaultValue="2" /> -->
+		
+		
+		<!--<ListPreference android:key="sound_repeat_times" android:title="Times 
+		to repeat" android:summary="How many times will sound play" android:entries="@array/entries_sound_repeat_times" 
+		android:entryValues="@array/entryvalues_sound_repeat_times" android:dialogTitle="Times 
+		to repeat" android:dependency="pluginEnabled" android:order="2" android:defaultValue="3" 
+		/> -->
+	<CheckBoxPreference android:key="vibrate_on"
+		android:title="Vibrate" android:order="3" android:dependency="pluginEnabled"
+		android:defaultValue="true" /><!--
+
+	<CheckBoxPreference android:key="override_nosound"
+		android:title="Override Sound Setup" android:summary="Play Sound in silenced mode"
+		android:order="4" android:dependency="pluginEnabled"
+		android:defaultValue="true" />
 
 
-	<ListPreference		android:key="updateInterval"
-		                android:title="Update Frequency"
-		                android:entries="@array/entries_update_intervals"
-		                android:entryValues="@array/entryvalues_update_intervals"
-		                android:dialogTitle="Select update Interval" 
-		                android:dependency="pluginEnabled"
-		                android:order="1"
-                        android:defaultValue="60"
-		                />
+--><ListPreference android:key="override_nosound" 
+		android:title="Override Sound volume" 
+		android:summary="Set sound volume" 
+		android:entries="@array/entries_sound_overide_volume" 
+		android:entryValues="@array/entryvalues_sound_overide_volume" 
+		android:dialogTitle="Select Sound volume" 
+		android:dependency="pluginEnabled" 
+		android:order="4" 
+		android:defaultValue="50" />
 
-	--><ListPreference	android:key="sound_nr"
-		                android:title="Sound"
-		                android:summary="Select Sound to play" 
-		                android:entries="@array/entries_sounds"
-		                android:entryValues="@array/entryvalues_sounds"
-		                android:dialogTitle="Select Sound to play" 
-		                android:dependency="pluginEnabled"
-		                android:order="1"
-                        android:defaultValue="2"
-		                />
 
-<ListPreference	android:key="sound_repeat_times"
-		                android:title="Times to repeat"
-		                android:summary="How many times will sound play"
-		                android:entries="@array/entries_sound_repeat_times"
-		                android:entryValues="@array/entryvalues_sound_repeat_times"
-		                android:dialogTitle="Times to repeat" 
-		                android:dependency="pluginEnabled"
-		                android:order="2"
-                        android:defaultValue="3"
-		                />
 
-<CheckBoxPreference android:key="vibrate_on"
-	                	android:title="Vibrate"
-	                	android:order = "3"
-	                	android:dependency="pluginEnabled"
-	                	android:defaultValue = "true"/>
-	                	
+
 
 </PreferenceScreen>

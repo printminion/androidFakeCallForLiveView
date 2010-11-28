@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Fake Call plugin</string>
-	<!-- 
-    	The following strings needs to be defined in order for the Plugin to function.
-    -->
+	<!-- The following strings needs to be defined in order for the Plugin to 
+		function. -->
 	<string name="pluginname">Fake Call Plugin</string>
-	<string name="intent_preferences">com.kupriyanov.android.liveview.plugins.fakecall.PREFERENCES</string>
-	<string name="intent_service">com.kupriyanov.android.liveview.plugins.fakecall.FakeCallService</string>
+	<string name="intent_preferences">com.kupriyanov.android.liveview.plugins.fakecall.PREFERENCES
+	</string>
+	<string name="intent_service">com.kupriyanov.android.liveview.plugins.fakecall.service.FakeCallService
+	</string>
 	<string name="application_description">Application plug-in for Sony Ericsson notifiers.
-For: LiveView
-Extends:com.sonyericsson.extras.liveview.</string>
+		For: LiveView
+		Extends:com.sonyericsson.extras.liveview.</string>
+
+	<!-- -->
+	<string name="prefs_ringtone_title">Select Ringtone</string>
+
+
 </resources>
