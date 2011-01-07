@@ -23,8 +23,12 @@
 
 package com.kupriyanov.android.liveview.plugins.fakecall.service;
 
+import java.util.ArrayList;
+
 import com.kupriyanov.android.liveview.plugins.fakecall.Preferences;
+import com.kupriyanov.android.liveview.plugins.fakecall.R;
 import com.kupriyanov.android.liveview.plugins.fakecall.Setup;
+import com.kupriyanov.android.liveview.plugins.fakecall.ui.FakeCallActivity;
 //import com.kupriyanov.android.media.SoundManager;
 import com.sonyericsson.extras.liveview.plugins.AbstractPluginService;
 import com.sonyericsson.extras.liveview.plugins.PluginConstants;
@@ -37,8 +41,12 @@ import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
@@ -55,6 +63,12 @@ public class FakeCallService extends AbstractPluginService {
 
 	private static final int VIBRATE_LENGTH = 1000; // ms
 	private static final int PAUSE_LENGTH = 1000; // ms
+
+	public static final int MSG_REGISTER_CLIENT = 1;
+	public static final int MSG_UNREGISTER_CLIENT = 2;
+	public static final int MSG_STOPPING_RINGING = 3;
+	public static final int MSG_STOPPED_RINGING = 4;
+	
 
 	// Our handler.
 	private Handler mHandler = null;
@@ -91,6 +105,97 @@ public class FakeCallService extends AbstractPluginService {
 	private int mVolume;
 	private int mLastRingerMode;
 
+	final Messenger mMessenger = new Messenger(new IncomingHandler()); // Target
+																								// we
+																								// publish
+																								// for
+																								// clients
+																								// to
+																								// send
+																								// messages
+																								// to
+																								// IncomingHandler.
+
+	ArrayList<Messenger> mClients = new ArrayList<Messenger>(); // Keeps track of
+																					// all current
+																					// registered
+																					// clients.
+
+	private static boolean isRunning = false;
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		return mMessenger.getBinder();
+	}
+
+	class IncomingHandler extends Handler { // Handler of incoming messages from
+		// clients.
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case MSG_REGISTER_CLIENT:
+				mClients.add(msg.replyTo);
+				break;
+			case MSG_UNREGISTER_CLIENT:
+				mClients.remove(msg.replyTo);
+				break;
+			case MSG_STOPPING_RINGING:
+				if (isRinging() || isVibrating()) {
+					stopRing();
+					sendMessageToUI(MSG_STOPPED_RINGING);
+				}
+				break;
+			default:
+				super.handleMessage(msg);
+			}
+		}
+	}
+
+	
+	private void sendMessageToUI(int messageToSend) {
+      for (int i=mClients.size()-1; i>=0; i--) {
+          try {
+              // Send data as an Integer
+              mClients.get(i).send(Message.obtain(null, messageToSend, messageToSend, 0));
+
+              //Send data as a String
+              Bundle b = new Bundle();
+              b.putString("str1", "ab" + messageToSend + "cd");
+              Message msg = Message.obtain(null, messageToSend);
+              msg.setData(b);
+              mClients.get(i).send(msg);
+
+          } catch (RemoteException e) {
+              // The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
+              mClients.remove(i);
+          }
+      }
+  }
+
+	
+
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		Log.d(Setup.LOG_TAG, "Enter FakeCallService.onCreate.");
+		// ...
+		// Do plugin specifics.
+		// ...
+		isRunning = true;
+
+		if (mContext == null) {
+			mContext = getApplicationContext();
+		}
+
+		// Create, Initialise and then load the Sound manager
+		// SoundManager.getInstance();
+		// SoundManager.initSounds(this);
+		// SoundManager.loadSounds();
+
+	}
+	
+	
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
@@ -102,27 +207,10 @@ public class FakeCallService extends AbstractPluginService {
 	}
 
 	@Override
-	public void onCreate() {
-		super.onCreate();
-		Log.d(Setup.LOG_TAG, "Enter FakeCallService.onCreate.");
-		// ...
-		// Do plugin specifics.
-		// ...
-		if (mContext == null) {
-			mContext = getApplicationContext();
-		}
-
-		// Create, Initialise and then load the Sound manager
-		// SoundManager.getInstance();
-		// SoundManager.initSounds(this);
-		// SoundManager.loadSounds();
-
-	}
-
-	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		Log.d(Setup.LOG_TAG, "Enter FakeCallService.onDestroy.");
+		isRunning = false;
 		// ...
 		// Do plugin specifics.
 		// ...
@@ -293,14 +381,23 @@ public class FakeCallService extends AbstractPluginService {
 			if (mVolume > 0) {
 
 				if (!isRinging()) {
+
+					/*
+					 * show Ring Activity
+					 */
+
+					Intent fakeCallActivity = new Intent(getApplicationContext(), FakeCallActivity.class);
+					fakeCallActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(fakeCallActivity);
+
 					final int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
 					final Double volumeToset = (double) maxVolume / 100 * (double) mVolume;
 
 					mLastVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
 					mLastRingerMode = mAudioManager.getRingerMode();
-					
+
 					mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-					
+
 					mAudioManager.setStreamVolume(AudioManager.STREAM_RING, volumeToset.intValue(),
 							AudioManager.FLAG_PLAY_SOUND);
 					if (Setup.LOG_ON)
@@ -349,10 +446,10 @@ public class FakeCallService extends AbstractPluginService {
 		final String uri = mSharedPreferences.getString(Preferences.PREFERENCE_RING_URI, null);
 		final int mVolume = Integer.parseInt(mSharedPreferences.getString(Preferences.PREFERENCE_OVERRIDE_SOUND, "50"));
 
-		if(mVolume == 0){
+		if (mVolume == 0) {
 			return false;
 		}
-		
+
 		if (uri == null) {
 			return false;
 		} else {
@@ -420,7 +517,6 @@ public class FakeCallService extends AbstractPluginService {
 
 			mAudioManager.setStreamVolume(AudioManager.STREAM_RING, mLastVolume, AudioManager.FLAG_PLAY_SOUND);
 			mAudioManager.setRingerMode(mLastRingerMode);
-			
 
 			if (mRingToneThread != null) {
 
@@ -449,6 +545,10 @@ public class FakeCallService extends AbstractPluginService {
 				mVibrator.cancel();
 			}
 		}
+	}
+
+	public static boolean isRunning() {
+		return isRunning;
 	}
 
 	private void log(String string) {
@@ -501,7 +601,7 @@ public class FakeCallService extends AbstractPluginService {
 
 				// sendAnnounce("Fake call",
 				// "Scroll down and push upper left button " + mCounter++);
-				sendAnnounce("Fake call", "Scroll down and push upper left button ");
+				sendAnnounce(getString(R.string.message_title), getString(R.string.message_text));
 
 			} catch (Exception re) {
 				Log.e(PluginConstants.LOG_TAG, "Failed to send image to LiveView.", re);

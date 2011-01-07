@@ -1,14 +1,8 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: F:\\!Develop\\android\\liveview\\mkFakeCallPlugin\\src\\com\\sonyericsson\\extras\\liveview\\IPluginServiceCallbackV1.aidl
+ * Original file: E:\\_Programms\\eclipse-php-helios-win32-x86_64\\workspace\\mkFakeCallPlugin\\src\\com\\sonyericsson\\extras\\liveview\\IPluginServiceCallbackV1.aidl
  */
 package com.sonyericsson.extras.liveview;
-import java.lang.String;
-import android.os.RemoteException;
-import android.os.IBinder;
-import android.os.IInterface;
-import android.os.Binder;
-import android.os.Parcel;
 public interface IPluginServiceCallbackV1 extends android.os.IInterface
 {
 /** Local-side IPC implementation stub class. */
@@ -21,7 +15,7 @@ public Stub()
 this.attachInterface(this, DESCRIPTOR);
 }
 /**
- * Cast an IBinder object into an IPluginServiceCallbackV1 interface,
+ * Cast an IBinder object into an com.sonyericsson.extras.liveview.IPluginServiceCallbackV1 interface,
  * generating a proxy if needed.
  */
 public static com.sonyericsson.extras.liveview.IPluginServiceCallbackV1 asInterface(android.os.IBinder obj)
@@ -282,14 +276,14 @@ _data.recycle();
 }
 }
 }
-static final int TRANSACTION_startPlugin = (IBinder.FIRST_CALL_TRANSACTION + 0);
-static final int TRANSACTION_stopPlugin = (IBinder.FIRST_CALL_TRANSACTION + 1);
-static final int TRANSACTION_getPluginName = (IBinder.FIRST_CALL_TRANSACTION + 2);
-static final int TRANSACTION_openInPhone = (IBinder.FIRST_CALL_TRANSACTION + 3);
-static final int TRANSACTION_onUnregistered = (IBinder.FIRST_CALL_TRANSACTION + 4);
-static final int TRANSACTION_displayCaps = (IBinder.FIRST_CALL_TRANSACTION + 5);
-static final int TRANSACTION_button = (IBinder.FIRST_CALL_TRANSACTION + 6);
-static final int TRANSACTION_screenMode = (IBinder.FIRST_CALL_TRANSACTION + 7);
+static final int TRANSACTION_startPlugin = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
+static final int TRANSACTION_stopPlugin = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
+static final int TRANSACTION_getPluginName = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
+static final int TRANSACTION_openInPhone = (android.os.IBinder.FIRST_CALL_TRANSACTION + 3);
+static final int TRANSACTION_onUnregistered = (android.os.IBinder.FIRST_CALL_TRANSACTION + 4);
+static final int TRANSACTION_displayCaps = (android.os.IBinder.FIRST_CALL_TRANSACTION + 5);
+static final int TRANSACTION_button = (android.os.IBinder.FIRST_CALL_TRANSACTION + 6);
+static final int TRANSACTION_screenMode = (android.os.IBinder.FIRST_CALL_TRANSACTION + 7);
 }
 // Start the plugin.
 

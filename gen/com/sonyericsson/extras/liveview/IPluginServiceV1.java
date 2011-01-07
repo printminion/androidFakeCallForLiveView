@@ -1,15 +1,8 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: F:\\!Develop\\android\\liveview\\mkFakeCallPlugin\\src\\com\\sonyericsson\\extras\\liveview\\IPluginServiceV1.aidl
+ * Original file: E:\\_Programms\\eclipse-php-helios-win32-x86_64\\workspace\\mkFakeCallPlugin\\src\\com\\sonyericsson\\extras\\liveview\\IPluginServiceV1.aidl
  */
 package com.sonyericsson.extras.liveview;
-import java.lang.String;
-import android.os.RemoteException;
-import android.os.IBinder;
-import android.os.IInterface;
-import android.os.Binder;
-import android.os.Parcel;
-import android.graphics.Bitmap;
 public interface IPluginServiceV1 extends android.os.IInterface
 {
 /** Local-side IPC implementation stub class. */
@@ -22,7 +15,7 @@ public Stub()
 this.attachInterface(this, DESCRIPTOR);
 }
 /**
- * Cast an IBinder object into an IPluginServiceV1 interface,
+ * Cast an IBinder object into an com.sonyericsson.extras.liveview.IPluginServiceV1 interface,
  * generating a proxy if needed.
  */
 public static com.sonyericsson.extras.liveview.IPluginServiceV1 asInterface(android.os.IBinder obj)
@@ -568,20 +561,20 @@ _data.recycle();
 }
 }
 }
-static final int TRANSACTION_register = (IBinder.FIRST_CALL_TRANSACTION + 0);
-static final int TRANSACTION_unregister = (IBinder.FIRST_CALL_TRANSACTION + 1);
-static final int TRANSACTION_sendAnnounce = (IBinder.FIRST_CALL_TRANSACTION + 2);
-static final int TRANSACTION_sendImage = (IBinder.FIRST_CALL_TRANSACTION + 3);
-static final int TRANSACTION_sendImageAsBitmap = (IBinder.FIRST_CALL_TRANSACTION + 4);
-static final int TRANSACTION_clearDisplay = (IBinder.FIRST_CALL_TRANSACTION + 5);
-static final int TRANSACTION_notifyInstalled = (IBinder.FIRST_CALL_TRANSACTION + 6);
-static final int TRANSACTION_ledControl = (IBinder.FIRST_CALL_TRANSACTION + 7);
-static final int TRANSACTION_vibrateControl = (IBinder.FIRST_CALL_TRANSACTION + 8);
-static final int TRANSACTION_sendImageAsBitmapByteArray = (IBinder.FIRST_CALL_TRANSACTION + 9);
-static final int TRANSACTION_screenOff = (IBinder.FIRST_CALL_TRANSACTION + 10);
-static final int TRANSACTION_screenDim = (IBinder.FIRST_CALL_TRANSACTION + 11);
-static final int TRANSACTION_screenOn = (IBinder.FIRST_CALL_TRANSACTION + 12);
-static final int TRANSACTION_screenOnAuto = (IBinder.FIRST_CALL_TRANSACTION + 13);
+static final int TRANSACTION_register = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
+static final int TRANSACTION_unregister = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
+static final int TRANSACTION_sendAnnounce = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
+static final int TRANSACTION_sendImage = (android.os.IBinder.FIRST_CALL_TRANSACTION + 3);
+static final int TRANSACTION_sendImageAsBitmap = (android.os.IBinder.FIRST_CALL_TRANSACTION + 4);
+static final int TRANSACTION_clearDisplay = (android.os.IBinder.FIRST_CALL_TRANSACTION + 5);
+static final int TRANSACTION_notifyInstalled = (android.os.IBinder.FIRST_CALL_TRANSACTION + 6);
+static final int TRANSACTION_ledControl = (android.os.IBinder.FIRST_CALL_TRANSACTION + 7);
+static final int TRANSACTION_vibrateControl = (android.os.IBinder.FIRST_CALL_TRANSACTION + 8);
+static final int TRANSACTION_sendImageAsBitmapByteArray = (android.os.IBinder.FIRST_CALL_TRANSACTION + 9);
+static final int TRANSACTION_screenOff = (android.os.IBinder.FIRST_CALL_TRANSACTION + 10);
+static final int TRANSACTION_screenDim = (android.os.IBinder.FIRST_CALL_TRANSACTION + 11);
+static final int TRANSACTION_screenOn = (android.os.IBinder.FIRST_CALL_TRANSACTION + 12);
+static final int TRANSACTION_screenOnAuto = (android.os.IBinder.FIRST_CALL_TRANSACTION + 13);
 }
 // Register to the Liveview application
 // cb - callback instance

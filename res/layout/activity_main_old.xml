@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<Button android:text="cancel" android:id="@+id/btnCancel"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:onClick="stopRinging" android:layout_alignParentBottom="true"></Button>
+	<ImageView android:layout_width="wrap_content" android:id="@+id/ImageView01"
+		android:layout_height="wrap_content" android:src="@drawable/icon"
+		android:layout_centerInParent="true" android:layout_centerVertical="true"></ImageView>
+
+	<TextView android:text="@+id/TextView01"
+		android:layout_height="wrap_content" android:layout_alignParentTop="true"
+		android:layout_width="fill_parent" android:id="@+id/tvStatus"></TextView>
+</RelativeLayout>

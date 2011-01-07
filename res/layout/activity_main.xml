@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project Licensed under the 
+	Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+
+<!-- In-call onscreen touch UI elements, used on some platforms. This layout 
+	is a fullscreen overlay, drawn on top of the non-touch-sensitive parts of 
+	the in-call UI (i.e. the call card). The top-level View here is a FrameLayout 
+	with 2 children: (1) incomingCallWidget: the UI displayed while an incoming 
+	call is ringing (2) inCallControls: the widgets visible while a regular call 
+	(or calls) is in progress Exactly one of these is visible at any given moment. -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+	<!-- (1) incomingCallWidget: the UI displayed while an incoming call is 
+		ringing. --><!-- <com.android.internal.widget.SlidingTab android:id="@+id/incomingCallWidget" 
+		android:layout_width="fill_parent" android:layout_height="wrap_content" android:visibility="gone" 
+		android:layout_alignParentBottom="true" android:layout_marginBottom="80dip" 
+		/> --><!-- (2) inCallControls: the widgets visible while a regular call (or calls) 
+		is in progress -->
+	<RelativeLayout android:id="@+id/inCallControls"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_alignParentTop="true" android:visibility="visible"
+		android:layout_above="@+id/bottomButtons">
+
+		<TextView android:id="@+id/tvStatus" android:layout_width="fill_parent"
+			android:text="@+id/TextView01" android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"></TextView>
+		<ImageView android:layout_width="wrap_content" android:id="@+id/ivPreview"
+			android:layout_height="wrap_content" android:src="@drawable/picture_unknown"
+			android:layout_centerInParent="true" android:background="@drawable/incall_photo_border_med"
+			android:layout_centerVertical="true"></ImageView>
+
+
+
+	</RelativeLayout>
+	<!-- Main cluster of onscreen buttons on the lower part of the screen. -->
+	<LinearLayout android:id="@+id/bottomButtons"
+		android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+		android:paddingLeft="4dip" android:paddingRight="4dip"
+		android:paddingBottom="4dip" android:visibility="visible">
+
+		<LinearLayout android:id="@+id/inCallControlsRow1"
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+			<!-- The buttons in the top row all have an icon *and* a text label, so 
+				we use a <Button> with a "top" compound drawable (rather than an ImageButton, 
+				which can't have a label.) Some buttons set the icon image here; others do 
+				it from Java if the image depends on the current state of the call. -->
+
+			<!-- The upper-left button in the main cluster is either "Add" or "Merge", 
+				depending on the state of the call. -->
+                
+
+                <!-- "End call" -->
+                <Button android:id="@+id/endButton"
+                        style="@style/InCallTouchButton"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/ic_in_call_touch_end"
+                        android:textColor="@color/incall_endButtonLabel"
+                        android:text="@string/onscreenEndCallText" android:layout_width="1dip" android:layout_weight="1" android:onClick="stopRinging"/>
+
+                <!-- "Dialpad" -->
+                
+            </LinearLayout>
+            <LinearLayout android:id="@+id/inCallControlsRow2"
+                          android:orientation="horizontal"
+                          android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          >
+                <!-- "Bluetooth" -->
+                <ToggleButton android:id="@+id/bluetoothButton"
+                        style="@style/InCallTouchToggleButton"
+                        android:layout_width="1dip"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/onscreenBluetoothText"
+                        android:textOff="@string/onscreenBluetoothText"
+                        android:onClick="stopRinging"
+                        />
+                <!-- "Mute" -->
+                <ToggleButton android:id="@+id/muteButton"
+                        style="@style/InCallTouchToggleButton"
+                        android:layout_width="1dip"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/onscreenMuteText"
+                        android:textOff="@string/onscreenMuteText"
+                        android:onClick="stopRinging"
+                        />
+                <!-- "Speaker" -->
+                <ToggleButton android:id="@+id/speakerButton"
+                        style="@style/InCallTouchToggleButton"
+                        android:layout_width="1dip"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textOn="@string/onscreenSpeakerText"
+                        android:textOff="@string/onscreenSpeakerText"
+                        android:onClick="stopRinging"
+                        />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+</RelativeLayout>
